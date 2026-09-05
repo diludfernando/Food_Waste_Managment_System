@@ -40,6 +40,18 @@ export default function Navbar() {
             >
               How It Works
             </Link>
+            <Show when="signed-in">
+              <Link
+                to="/donors"
+                className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 ${
+                  isActive('/donors')
+                    ? 'border-emerald-600 text-emerald-600 font-semibold'
+                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                }`}
+              >
+                Donor Dashboard
+              </Link>
+            </Show>
           </nav>
 
           {/* Auth Controls */}

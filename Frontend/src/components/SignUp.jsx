@@ -9,7 +9,8 @@ export default function SignUp() {
           routing="path" 
           path="/signup" 
           signInUrl="/signin" 
-          fallbackRedirectUrl="/"
+          fallbackRedirectUrl="/donors"
+          forceRedirectUrl="/donors"
         />
       </div>
     </div>
