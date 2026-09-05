@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Show, UserButton } from '@clerk/react';
-import { Leaf, LogIn, UserPlus } from 'lucide-react';
+import { Show, UserButton, useUser } from '@clerk/react';
+import { Leaf, LogIn, UserPlus, Utensils, HeartHandshake } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
+  const { user } = useUser();
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname.startsWith(path);
+  const userRole = user?.unsafeMetadata?.role || 'donor';
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
@@ -27,40 +29,42 @@ export default function Navbar() {
             <Link
               to="/"
               className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 ${
-                isActive('/')
+                location.pathname === '/'
                   ? 'border-emerald-600 text-emerald-600'
                   : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
               }`}
             >
               Home
             </Link>
-            <Link
-              to="/#about"
-              className="text-sm font-medium transition-colors border-b-2 border-transparent py-5 px-1 text-slate-600 hover:text-slate-900 hover:border-slate-300"
-            >
-              How It Works
-            </Link>
+
             <Show when="signed-in">
-              <Link
-                to="/donors"
-                className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 ${
-                  isActive('/donors')
-                    ? 'border-emerald-600 text-emerald-600 font-semibold'
-                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
-                }`}
-              >
-                Donor Dashboard
-              </Link>
-              <Link
-                to="/charity"
-                className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 ${
-                  isActive('/charity')
-                    ? 'border-blue-600 text-blue-600 font-semibold'
-                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
-                }`}
-              >
-                Charity Dashboard
-              </Link>
+              {userRole === 'donor' && (
+                <Link
+                  to="/donors"
+                  className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 flex items-center space-x-1.5 ${
+                    isActive('/donors')
+                      ? 'border-emerald-600 text-emerald-600 font-semibold'
+                      : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                  }`}
+                >
+                  <Utensils className="h-4 w-4" />
+                  <span>Donor Dashboard</span>
+                </Link>
+              )}
+
+              {userRole === 'charity' && (
+                <Link
+                  to="/charity"
+                  className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 flex items-center space-x-1.5 ${
+                    isActive('/charity')
+                      ? 'border-blue-600 text-blue-600 font-semibold'
+                      : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                  }`}
+                >
+                  <HeartHandshake className="h-4 w-4" />
+                  <span>Charity Dashboard</span>
+                </Link>
+              )}
             </Show>
           </nav>
 
@@ -92,13 +96,18 @@ export default function Navbar() {
             </Show>
 
             <Show when="signed-in">
-              <UserButton 
-                appearance={{
-                  elements: {
-                    avatarBox: 'w-10 h-10 border-2 border-emerald-500 rounded-full'
-                  }
-                }}
-              />
+              <div className="flex items-center space-x-3">
+                <span className="hidden sm:inline-block px-2.5 py-1 text-xs font-bold uppercase rounded-lg border bg-slate-50 text-slate-700">
+                  Role: {userRole}
+                </span>
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-10 h-10 border-2 border-emerald-500 rounded-full'
+                    }
+                  }}
+                />
+              </div>
             </Show>
           </div>
         </div>

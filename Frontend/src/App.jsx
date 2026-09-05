@@ -6,6 +6,7 @@ import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import DonorDashboard from './components/DonorDashboard';
 import CharityDashboard from './components/CharityDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import { Leaf } from 'lucide-react';
 
 function App() {
@@ -19,9 +20,30 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signin/*" element={<SignIn />} />
             <Route path="/signup/*" element={<SignUp />} />
-            <Route path="/donors/*" element={<DonorDashboard />} />
-            <Route path="/charity/*" element={<CharityDashboard />} />
-            <Route path="/charity-dashboard/*" element={<CharityDashboard />} />
+            <Route 
+              path="/donors/*" 
+              element={
+                <ProtectedRoute allowedRole="donor">
+                  <DonorDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/charity/*" 
+              element={
+                <ProtectedRoute allowedRole="charity">
+                  <CharityDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/charity-dashboard/*" 
+              element={
+                <ProtectedRoute allowedRole="charity">
+                  <CharityDashboard />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </main>
 
