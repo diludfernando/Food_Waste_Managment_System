@@ -34,83 +34,8 @@ export default function DonorDashboard() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [formError, setFormError] = useState(null);
 
-  // Sample donations state demonstrating full lifecycle workflow
-  const [donations, setDonations] = useState([
-    {
-      id: 1,
-      title: 'Chicken Biryani & Raitha (50 Meals)',
-      dietary: 'Non-Veg',
-      isHalal: true,
-      portions: 50,
-      weight: '15.0',
-      preparedTime: '2026-09-05T09:00',
-      expiryTime: '2026-09-05T21:00',
-      address: '45 Main Street, Green Garden Restaurant',
-      city: 'Colombo',
-      contact: '+94 77 123 4567',
-      status: 'Available', // Available | Reserved | Collected | Expired
-      reservedBy: null,
-      createdAt: '2 hours ago'
-    },
-    {
-      id: 2,
-      title: 'Fresh Veg Sandwich & Bakery Bundle',
-      dietary: 'Veg',
-      isHalal: true,
-      portions: 30,
-      weight: '6.5',
-      preparedTime: '2026-09-05T07:30',
-      expiryTime: '2026-09-05T19:30',
-      address: '88 4th Avenue, SunRise Bakery',
-      city: 'Kandy',
-      contact: '+94 81 987 6543',
-      status: 'Reserved',
-      reservedBy: {
-        ngoName: 'Hope Foundation Children Shelter',
-        contactPerson: 'Sarah Jenkins',
-        phone: '+94 81 555 1122',
-        claimedTime: '1 hour ago'
-      },
-      createdAt: '4 hours ago'
-    },
-    {
-      id: 3,
-      title: 'Organic Fresh Fruits & Apples',
-      dietary: 'Veg',
-      isHalal: true,
-      portions: 45,
-      weight: '18.0',
-      preparedTime: '2026-09-04T08:00',
-      expiryTime: '2026-09-04T18:00',
-      address: 'FreshMart Supermarket, Galle Rd',
-      city: 'Galle',
-      contact: '+94 91 333 4455',
-      status: 'Collected',
-      reservedBy: {
-        ngoName: 'Community Meals Bank',
-        contactPerson: 'David Miller',
-        phone: '+94 91 777 8899',
-        claimedTime: 'Yesterday 10:00 AM'
-      },
-      createdAt: '1 day ago'
-    },
-    {
-      id: 4,
-      title: 'Buffet Salad & Soup Trays',
-      dietary: 'Veg',
-      isHalal: false,
-      portions: 20,
-      weight: '4.0',
-      preparedTime: '2026-09-03T12:00',
-      expiryTime: '2026-09-03T20:00',
-      address: 'City Hotel Banquet Hall',
-      city: 'Colombo',
-      contact: '+94 11 222 3333',
-      status: 'Expired',
-      reservedBy: null,
-      createdAt: '2 days ago'
-    }
-  ]);
+  // Donations state initialized to empty list
+  const [donations, setDonations] = useState([]);
 
   // Form State for Add / Edit
   const [formData, setFormData] = useState({
@@ -404,8 +329,24 @@ export default function DonorDashboard() {
             </div>
           </div>
 
-          {/* Donation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Empty State when no donations exist */}
+          {filteredDonations.length === 0 ? (
+            <div className="text-center py-16 bg-slate-50/60 rounded-3xl border border-dashed border-slate-200">
+              <Utensils className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-slate-800">No Food Donations Posted Yet</h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-5">
+                Post your surplus food items to help local charities, shelters, and communities in real-time.
+              </p>
+              <button
+                onClick={openAddModal}
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all inline-flex items-center space-x-1.5"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span>Add Your First Donation</span>
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDonations.map((item) => (
               <div 
                 key={item.id}
@@ -526,6 +467,7 @@ export default function DonorDashboard() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
 
