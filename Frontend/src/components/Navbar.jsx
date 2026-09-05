@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, LogIn, UserPlus, PlusCircle } from 'lucide-react';
+import { Show, UserButton } from '@clerk/react';
+import { Leaf, LogIn, UserPlus } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
@@ -39,38 +40,44 @@ export default function Navbar() {
             >
               How It Works
             </Link>
-            <Link
-              to="/#impact"
-              className="text-sm font-medium transition-colors border-b-2 border-transparent py-5 px-1 text-slate-600 hover:text-slate-900 hover:border-slate-300"
-            >
-              Our Impact
-            </Link>
           </nav>
 
-          {/* Action Buttons */}
+          {/* Auth Controls */}
           <div className="flex items-center space-x-3">
-            <Link
-              to="/signin"
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center space-x-1.5 ${
-                isActive('/signin')
-                  ? 'bg-emerald-50 text-emerald-700 font-semibold'
-                  : 'text-slate-700 bg-slate-100 hover:bg-slate-200'
-              }`}
-            >
-              <LogIn className="h-4 w-4" />
-              <span>Sign In</span>
-            </Link>
-            <Link
-              to="/signup"
-              className={`px-4 py-2 text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center space-x-1.5 ${
-                isActive('/signup')
-                  ? 'bg-emerald-700 text-white'
-                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
-              }`}
-            >
-              <UserPlus className="h-4 w-4" />
-              <span>Sign Up</span>
-            </Link>
+            <Show when="signed-out">
+              <Link
+                to="/signin"
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center space-x-1.5 ${
+                  isActive('/signin')
+                    ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                    : 'text-slate-700 bg-slate-100 hover:bg-slate-200'
+                }`}
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Sign In</span>
+              </Link>
+              <Link
+                to="/signup"
+                className={`px-4 py-2 text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center space-x-1.5 ${
+                  isActive('/signup')
+                    ? 'bg-emerald-700 text-white'
+                    : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                }`}
+              >
+                <UserPlus className="h-4 w-4" />
+                <span>Sign Up</span>
+              </Link>
+            </Show>
+
+            <Show when="signed-in">
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: 'w-10 h-10 border-2 border-emerald-500 rounded-full'
+                  }
+                }}
+              />
+            </Show>
           </div>
         </div>
       </div>
