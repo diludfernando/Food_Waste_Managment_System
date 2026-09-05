@@ -51,6 +51,16 @@ export default function Navbar() {
               >
                 Donor Dashboard
               </Link>
+              <Link
+                to="/charity"
+                className={`text-sm font-medium transition-colors border-b-2 py-5 px-1 ${
+                  isActive('/charity')
+                    ? 'border-blue-600 text-blue-600 font-semibold'
+                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                }`}
+              >
+                Charity Dashboard
+              </Link>
             </Show>
           </nav>
 
