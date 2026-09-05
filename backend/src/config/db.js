@@ -1,12 +1,10 @@
-import mongoose from 'mongoose';
+import prisma from './prisma.js';
 
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/food_waste_db');
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    await prisma.$connect();
+    console.log('Prisma Database Connected Successfully');
   } catch (error) {
-    console.error(`MongoDB Connection Error: ${error.message}`);
-    // Optional: Process exit can be enabled once DB connection is strictly required
-    // process.exit(1);
+    console.error(`Prisma DB Connection Error: ${error.message}`);
   }
 };

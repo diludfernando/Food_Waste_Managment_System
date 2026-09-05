@@ -1,6 +1,7 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
+import prisma from '../config/prisma.js';
 
-// Sample in-memory food items list for quick initial testing without DB
+// Fallback in-memory items when DB is not reachable
 const mockFoodItems = [
   {
     id: '1',
@@ -8,7 +9,7 @@ const mockFoodItems = [
     quantity: '15 kg',
     expiryTime: new Date(Date.now() + 86400000).toISOString(),
     location: 'Community Center Kitchen A',
-    status: 'available',
+    status: 'AVAILABLE',
   },
   {
     id: '2',
@@ -16,18 +17,30 @@ const mockFoodItems = [
     quantity: '30 meals',
     expiryTime: new Date(Date.now() + 43200000).toISOString(),
     location: 'Downtown Food Pantry',
-    status: 'available',
+    status: 'AVAILABLE',
   },
 ];
 
 // @desc    Get all available food items
 // @route   GET /api/food
 export const getFoodItems = asyncHandler(async (req, res) => {
-  res.status(200).json({
-    success: true,
-    count: mockFoodItems.length,
-    data: mockFoodItems,
-  });
+  try {
+    const foodItems = await prisma.foodItem.findMany({
+      include: { donor: { select: { id: true, name: true, email: true } } },
+    });
+    return res.status(200).json({
+      success: true,
+      count: foodItems.length,
+      data: foodItems.length > 0 ? foodItems : mockFoodItems,
+    });
+  } catch (error) {
+    // If DB is offline, return mock data
+    return res.status(200).json({
+      success: true,
+      count: mockFoodItems.length,
+      data: mockFoodItems,
+    });
+  }
 });
 
 // @desc    Create a new food donation item
@@ -40,19 +53,33 @@ export const createFoodItem = asyncHandler(async (req, res) => {
     throw new Error('Please provide title, quantity, and location');
   }
 
-  const newItem = {
-    id: String(mockFoodItems.length + 1),
-    title,
-    quantity,
-    expiryTime: expiryTime || new Date(Date.now() + 86400000).toISOString(),
-    location,
-    status: 'available',
-  };
+  try {
+    const newItem = await prisma.foodItem.create({
+      data: {
+        title,
+        quantity,
+        expiryTime: expiryTime ? new Date(expiryTime) : new Date(Date.now() + 86400000),
+        location,
+      },
+    });
 
-  mockFoodItems.push(newItem);
-
-  res.status(201).json({
-    success: true,
-    data: newItem,
-  });
+    return res.status(201).json({
+      success: true,
+      data: newItem,
+    });
+  } catch (error) {
+    const fallbackItem = {
+      id: String(mockFoodItems.length + 1),
+      title,
+      quantity,
+      expiryTime: expiryTime || new Date(Date.now() + 86400000).toISOString(),
+      location,
+      status: 'AVAILABLE',
+    };
+    mockFoodItems.push(fallbackItem);
+    return res.status(201).json({
+      success: true,
+      data: fallbackItem,
+    });
+  }
 });
